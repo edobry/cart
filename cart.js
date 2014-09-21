@@ -119,7 +119,11 @@ $(function() {
     console.log(px);
   };
 
+//  plot(function(x) {
+//    return Math.pow(Math.E, -Math.pow(x, 2));
+//  });
+
   plot(function(x) {
-    return Math.pow(Math.E, -Math.pow(x, 2));
+    return 1/(Math.PI*(1+Math.pow(x, 2)));
   });
 });
