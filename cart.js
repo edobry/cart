@@ -16,7 +16,7 @@ $(function() {
     return x*ppu + origin.x;
   };
   var yToJ = function(y) {
-    return y*ppu + origin.y;
+    return origin.y - y*ppu;
   };
   var iToX = function(x) {
     return (x - x_axis)/ppu;
@@ -119,5 +119,7 @@ $(function() {
     console.log(px);
   };
 
-  plot(Math.sin);
+  plot(function(x) {
+    return Math.pow(Math.E, -Math.pow(x, 2));
+  });
 });
