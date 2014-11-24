@@ -119,11 +119,43 @@ $(function() {
     console.log(px);
   };
 
+  var reset = function() { ctx.clearRect(0, 0, canvas.width(), canvas.height()); };
+
 //  plot(function(x) {
 //    return Math.pow(Math.E, -Math.pow(x, 2));
 //  });
+  
+  $("#go").click(function() {
+    var equations = $("#equations").val().split('\n');
+    var funcs = equations.map(function(eq) { return new Function('x', "return " + eq + ';'); });
 
-  plot(function(x) {
-    return 1/(Math.PI*(1+Math.pow(x, 2)));
+    reset();
+    drawAxes();
+    funcs.forEach(plot);
   });
+
+  // plot(function(x) {
+  //   return 1/(Math.PI*(1+Math.pow(x, 2)));
+  // });
+
+  //$("#out").text(converge(a, b, 0, 5));
 });
+
+var converge = function(a, b, start, end) {
+  if(end <= start) throw Exception("End must be after start");
+
+  var D = function(x) { return a(x) - b(x); };
+  var prevD = D(start);
+  var out = true;
+  for(var i = ++start; i <= end; i++) {
+    var d = D(i);
+    if(d > prevD) {
+      out = false;
+      break;
+    }
+    prevD = d;
+  };
+
+  return out;
+};
+
