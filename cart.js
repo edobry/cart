@@ -1,5 +1,5 @@
 $(function() {
-  var ppu = 15;
+  var basePPU = 15;
 
   var canvas = $("canvas")[0];
 
@@ -17,7 +17,7 @@ $(function() {
   var p = function(x, y) { return { x: x, y: y }; };
 
   var init = function(zoom) {
-    var ppu = ppu * zoom;
+    var ppu = basePPU * zoom;
     var width = Math.round($(window).width(), 0);
     var height = Math.round($(window).height(), 0);
 
@@ -120,7 +120,7 @@ $(function() {
       }
     };
   };
-  init();
+  init(parseInt($("#zoom").val()));
 
 //  plot(function(x) {
 //    return Math.pow(Math.E, -Math.pow(x, 2));
