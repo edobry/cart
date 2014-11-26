@@ -1,40 +1,12 @@
 $(function() {
-  var side = 300;
+  var ppu = 15;
 
-  var x_axis = side/2;
-  var y_axis = side/2;
-
-  var x_max = 5;
-  var y_max = 5;
-
-  var ppu = (side/2)/x_max;
-  var pixelVal = 1/ppu;
-
-  var origin = { x: x_axis, y: y_axis };
-
-  var xToI = function(x) {
-    return x*ppu + origin.x;
-  };
-  var yToJ = function(y) {
-    return origin.y - y*ppu;
-  };
-  var iToX = function(x) {
-    return (x - x_axis)/ppu;
-  };
-  var jToY = function(y) {
-    return (y - y_axis)/ppu;
-  };
-
-  var pointToPx = function(point) {
-    return p(xToI(point.x), ytoJ(point.y));
-  };
-  var pxToPoint = function(pixel) {
-    return p(iToX(pixel.x), jtoY(pixel.y));
-  };
-
-  var canvas = $("canvas").css({ height: side, width: side});
+  var canvas = $("canvas")[0];
 
   var ctx = window.ctx = $("canvas")[0].getContext("2d");
+  ctx.font = "12px sans-serif";
+  ctx.lineWidth = 1;
+
   var out = $("#out");
 
   var l = function(from, to) {
@@ -44,17 +16,48 @@ $(function() {
   };
   var p = function(x, y) { return { x: x, y: y }; };
 
+  var init = function(zoom) {
+    var ppu = ppu * zoom;
+    var width = Math.round($(window).width(), 0);
+    var height = Math.round($(window).height(), 0);
 
-  var x_scale = x_axis / (x_max);
-  var y_scale = y_axis / (y_max);
+    canvas.height = height;
+    canvas.width = width;
 
-  var x_offset = x_axis + 0.5; // location on canvas
-  var y_offset = y_axis + 0.5; // of graph's origin
+    ctx.clearRect(0, 0, width, height);
 
-  var drawAxes = function() {
+    var x_axis = width/2;
+    var y_axis = height/2;
 
-    ctx.font = "12px sans-serif";
-    ctx.lineWidth = 1;
+    var origin = { x: x_axis, y: y_axis };
+    var x_offset = x_axis + 0.5; // location on canvas
+    var y_offset = y_axis + 0.5; // of graph's origin
+
+    var ppu = ppu * zoom;
+    var pixelVal = 1/ppu;
+
+    var y_max = Math.floor(y_axis/ppu);
+    var x_max = Math.floor(x_axis/ppu);
+
+    var xToI = function(x) {
+      return x*ppu + origin.x;
+    };
+    var yToJ = function(y) {
+      return origin.y - y*ppu;
+    };
+    var iToX = function(x) {
+      return (x - x_axis)/ppu;
+    };
+    var jToY = function(y) {
+      return (y - y_axis)/ppu;
+    };
+
+    var pointToPx = function(point) {
+      return p(xToI(point.x), ytoJ(point.y));
+    };
+    var pxToPoint = function(pixel) {
+      return p(iToX(pixel.x), jtoY(pixel.y));
+    };
 
     // draw x-axis
     ctx.beginPath();
@@ -66,7 +69,7 @@ $(function() {
     // draw x values
     j = -x_max;
     while (j <= x_max) {
-      x = j * x_scale;
+      x = j * ppu;
       ctx.strokeStyle = '#aaa';
       ctx.beginPath();
       ctx.moveTo(x + x_offset, y_offset);
@@ -91,7 +94,7 @@ $(function() {
     // draw y values
     j = -y_max;
     while (j <= y_max) {
-      y = j * y_scale;
+      y = j * ppu;
       ctx.strokeStyle = '#aaa';
       ctx.beginPath();
       ctx.moveTo(x_offset, y + y_offset);
@@ -105,21 +108,19 @@ $(function() {
       j++;
       if (j === 0) { j++; }
     }
+    return {
+      width: width,
+      height: height,
+      plot: function(f) {
+        for(var i = 0; i < width; i++){
+          var x = iToX(i);
+          var y = f(x);
+          ctx.fillRect(i, yToJ(y), 1, 1);
+        }
+      }
+    };
   };
-  drawAxes();
-
-
-  var plot = function(f) {
-    var px;
-    for(var i = 0; i < side; i++){
-      var x = iToX(i);
-      var y = f(x);
-      ctx.fillRect(i, yToJ(y), 1, 1);
-    }
-    console.log(px);
-  };
-
-  var reset = function() { ctx.clearRect(0, 0, canvas.width(), canvas.height()); };
+  init();
 
 //  plot(function(x) {
 //    return Math.pow(Math.E, -Math.pow(x, 2));
@@ -129,9 +130,9 @@ $(function() {
     var equations = $("#equations").val().split('\n');
     var funcs = equations.map(function(eq) { return new Function('x', "return " + eq + ';'); });
 
-    reset();
-    drawAxes();
-    funcs.forEach(plot);
+    var graph = init(parseInt($("#zoom").val()));
+
+    funcs.forEach(graph.plot);
   });
 
   // plot(function(x) {

@@ -4,14 +4,19 @@
     <script src="bower_components/zepto/zepto.js" type="text/javascript"></script>
 </head>
 <body>
-	<form>
+	<form style="position:absolute;z-index:1">
 		<textarea id="equations"></textarea>
 		<input id="go" type="button" value="Graph" />
+		<label for="zoom">Zoom: </label><input type="number" value="1" id="zoom"/>
 	</form>
 
-    <canvas width="300" height="300"></canvas>
+    <canvas style="position:absolute;top:0;left:0"></canvas>
     <span id="out"></span>
 
     <script src="cart.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    	$(function() {
+    	});
+    </script>
 </body>
 </html>
