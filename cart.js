@@ -126,6 +126,8 @@ $(function() {
           var j = calcJ(i);
           ctx.lineTo(i, j);
         }
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "red";
         ctx.stroke();
       }
     };
