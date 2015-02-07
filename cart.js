@@ -112,11 +112,21 @@ $(function() {
       width: width,
       height: height,
       plot: function(f) {
-        for(var i = 0; i < width; i++){
+        var calcJ = function(i) {
           var x = iToX(i);
           var y = f(x);
-          ctx.fillRect(i, yToJ(y), 1, 1);
+          return yToJ(y);
+        };
+        var prev = calcJ(0);
+
+        ctx.beginPath();
+        ctx.moveTo(0, prev);
+
+        for(var i = 1; i < width; i++){
+          var j = calcJ(i);
+          ctx.lineTo(i, j);
         }
+        ctx.stroke();
       }
     };
   };
