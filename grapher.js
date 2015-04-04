@@ -69,6 +69,10 @@ var Grapher = function(options) {
     };
 
     var drawAxes = function() {
+        ctx.clearRect(0, 0, config.width, config.height);
+
+        ctx.lineWidth = 1;
+
         // draw x-axis
         drawLine(makePoint(0, y_offset), makePoint(x_axis*2, y_offset));
 
@@ -113,8 +117,10 @@ var Grapher = function(options) {
         ctx.font = config.font;
         ctx.lineWidth = config.lineWidth;
 
-        ctx.clearRect(0, 0, config.width, config.height);
+        drawAxes();
+    };
 
+    exports.reset = function() {
         drawAxes();
     };
 
